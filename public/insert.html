@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Acme Web Design</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css" />
+  <link rel="stylesheet" href="assets/css/style-starter.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="brand"><span>Acme</span> Web Design</h1>
+    <div class="wrapper">
+      <div class="company-info">
+        <h3>Acme Web Design</h3>
+        <ul>
+          <li><i class="fa fa-road"></i> 44 Something st</li>
+          <li><i class="fa fa-phone"></i> (555) 555-5555</li>
+          <li><i class="fa fa-envelope"></i> test@acme.test</li>
+        </ul>
+      </div>
+      <div class="contact">
+        <h3>Email Us</h3>
+        <div class="alert">Your message has been sent</div>
+        <form id="contactForm">
+          <p>
+            <label>Name</label>
+            <input type="text" name="name" id="name" required>
+          </p>
+          <p>
+            <label>Company</label>
+            <input type="text" name="company" id="company">
+          </p>
+          <p>
+            <label>Email Address</label>
+            <input type="email" name="email" id="email" required>
+          </p>
+          <p>
+            <label>Phone Number</label>
+            <input type="text" name="phone" id="phone">
+          </p>
+          <p class="full">
+            <label>Message</label>
+            <textarea name="message" rows="5" id="message"></textarea>
+          </p>
+          <p class="full">
+            <button type="submit">Submit</button>
+          </p>
+        </form>
+        <div id="root">
+           <p></p>
+           <h3></h3> 
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <script src="https://www.gstatic.com/firebasejs/8.2.5/firebase.js"></script>
+  <!-- <script src="./assets/js/main.js"></script> -->
+  <script>
+
+    // Initialize Firebase (ADD YOUR OWN DATA)
+
+var config = {
+    apiKey: "AIzaSyDUAJj0aCxMq-IEyEIEGCycyZb1x8O3V1c",
+    authDomain: "finalyearproj-90a63.firebaseapp.com",
+    databaseURL: "https://finalyearproj-90a63-default-rtdb.firebaseio.com",
+    projectId: "finalyearproj-90a63",
+    storageBucket: "finalyearproj-90a63.appspot.com",
+    messagingSenderId: "70010473764"
+  };
+
+  firebase.initializeApp(config);
+  
+  // Reference messages collection
+  var messagesRef =firebase.database().ref('messages');
+  
+  // Listen for form submit
+  document.getElementById('contactForm').addEventListener('submit', submitForm);
+  
+  // Submit form
+  function submitForm(e){
+    e.preventDefault();
+  
+    // Get values
+    var name = getInputVal('name');
+    var company = getInputVal('company');
+    var email = getInputVal('email');
+    var phone = getInputVal('phone');
+    var message = getInputVal('message');
+  
+    // Save message
+    saveMessage(name, company, email, phone, message);
+  
+    // Show alert
+    document.querySelector('.alert').style.display = 'block';
+  
+    // Hide alert after 3 seconds
+    setTimeout(function(){
+      document.querySelector('.alert').style.display = 'none';
+    },3000);
+  
+    // Clear form
+    document.getElementById('contactForm').reset();
+  }
+  
+  // Function to get get form values
+  function getInputVal(id){
+    return document.getElementById(id).value;
+  }
+  
+  // Save message to firebase
+  function saveMessage(name, company, email, phone, message){
+    var newMessageRef = messagesRef.push();
+    newMessageRef.set({
+      name: name,
+      company:company,
+      email:email,
+      phone:phone,
+      message:message
+    });
+  }
+
+
+//   var link = document.createElement('link');
+
+//   link.rel='stylesheet';
+//   link.type='text/css';
+//   link.href='style-starter.css';
+
+  
+  //get data from firebase
+//   messagesRef.on("value", function(snapshot){
+//     snapshot.forEach(function(element)
+//     {
+//         document.querySelector('#root').innerHTML += `
+//         <div>${element.val().email}</div>
+//         <div>${element.val().name}</div>
+
+        
+        
+//         `
+//     });
+
+// })
+    function selectData(){
+    messagesRef.on('value',function(AllRecords)
+    
+    {
+        AllRecords.forEach(
+            function(currentRecord)
+            {
+                var name=currentRecord.val().name;
+                var message=currentRecord.val().message;
+                var email=currentRecord.val().email;
+                AddItemsToPage(name,message,email);
+
+            }
+        );
+    });
+
+    }
+
+    window.onload = selectData;
+    // var dbName=0;
+    function AddItemsToPage(name,message,email)
+    {
+        var root=document.getElementById('root');
+        var nameInfo=document.createElement('h1');
+        var namesz=document.createElement('h3');
+        var emailInfo=document.createElement('p');
+        var messageInfo=document.createElement('p');
+
+        // nameInfo.innerHTML =++dbName;
+        namesz.innerHTML=name;
+        emailInfo.innerHTML =email;
+        messageInfo.innerHTML =message;
+        
+
+
+        nameInfo.appendChild(emailInfo);
+        nameInfo.appendChild(namesz);
+        nameInfo.appendChild(messageInfo);
+        root.appendChild(nameInfo);
+
+
+
+    }
+
+    
+    // var data=snapshot.val();
+    // for(let i in data)
+    // {
+    //     console.log(data[i]);
+    // }
+
+
+
+  
+
+  </script>
+
+
+</body>
+</html>
